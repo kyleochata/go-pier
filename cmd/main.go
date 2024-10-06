@@ -2,28 +2,30 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
+	"syscall"
 )
 
 func main() {
-	fmt.Println("hello world")
-	if len(os.Args) < 3 {
-		fmt.Println("Usage: ccrun run <command> <args>...")
+	switch os.Args[1] {
+	case "run":
+		run()
+	default:
+		panic("pass me an argument please")
 	}
-	args := os.Args
-	if args[1] != "run" {
-		fmt.Println("Usage: ccrun run <cmd> <args>...")
-	}
-	runCmd(args[2], args[3:])
-
 }
-func runCmd(command string, args []string) {
-	cmd := exec.Command(command, args...)
+func run() {
+	fmt.Printf("Running %v\n", os.Args[2:])
+	cmd := exec.Command(os.Args[2], os.Args[3:]...)
+	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		log.Fatalf("Command execution failure: %v", err)
+	// cmd.SysProcAttr = &syscall.SysProcAttr{
+	// 	Cloneflags: syscall.CLONE_NEWUTS,
+	// }
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID,
 	}
+	cmd.Run()
 }
