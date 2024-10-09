@@ -7,7 +7,7 @@
 *.dll
 *.so
 *.dylib
-
+.vscode
 # Test binary, built with `go test -c`
 *.test
 
@@ -24,5 +24,4 @@ go.work.sum
 # env file
 .env
 /alpine
-/.vscode
 /ubuntu
